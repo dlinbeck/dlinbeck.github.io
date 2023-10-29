@@ -111,7 +111,7 @@ function scrollLeftColumnToActiveVerse(id){
 }
 
 async function loadData(){ //title Female share of graduates in tertiary programs by field (%)
-    await d3.csv("../simpleGradsGender.csv").then(data => {
+    await d3.csv("simpleGradsGender.csv").then(data => {
         fieldData = data;
     });
 }
