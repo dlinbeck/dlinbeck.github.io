@@ -1,0 +1,129 @@
+/* THIS CODE IS MY OWN WORK, IT WAS WRITTEN WITHOUT CONSULTING CODE
+ WRITTEN BY OTHER STUDENTS OR LARGE LANGUAGE MODELS LIKE CHATGPT. 
+ - Danielle Linbeck */
+body {
+    background-color: #9BA89F;
+    color: black;;
+    font-family: 'Roboto Slab', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+h1,
+p {
+  margin-top: 15px;
+  padding: 0;
+}
+
+header {
+  text-align: center;
+  height: 70px;
+}
+
+.title {
+    padding: 20px;
+}
+  
+.wrapper {
+    display: flex; 
+    flex-grow: 1;
+    min-height: calc(100vh - 150px);
+}
+
+.left-column {
+    flex: 2; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.right-column {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+  
+.right-column-content {
+    max-height: calc(100vh - 150px);
+    overflow: auto;
+    font-family: sans-serif;
+}
+
+.right-column-content::-webkit-scrollbar{
+    width: 0;
+    height: 0;
+}
+
+footer {
+    position: fixed;
+    bottom: 0; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 55px;
+    background-color: #393842;
+}
+
+svg {
+    background-color: white;
+}
+
+.verse {
+    font-size: 2em;
+    list-style-type: none;
+    padding: 0px;
+    font-weight: 200;
+    color: lightslategray;
+}
+
+.active-verse{
+    font-weight: 600;
+    color: darkslategrey; /* updated with Colormind */
+}
+  
+.active-line{
+    color:black;
+}
+
+.filler-verse{
+    height:145px;
+}
+
+.slidecontainer {
+    width: 50%; /* Width of the outside container */
+}
+
+.slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 10px;
+    border-radius: 5px;  
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.85;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+}
+
+.slider:hover {
+    opacity: 1; /* Fully shown on mouse-over */
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%; 
+    background: #FFC874;
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #FFC874;
+    cursor: pointer;
+}

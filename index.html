@@ -1,0 +1,68 @@
+<!-- THIS CODE IS MY OWN WORK, IT WAS WRITTEN WITHOUT CONSULTING CODE
+ WRITTEN BY OTHER STUDENTS OR LARGE LANGUAGE MODELS LIKE CHATGPT. 
+ - Danielle Linbeck -->
+ <!DOCTYPE html>
+ <html>
+   <head>
+     <title>Static Vis for Poem</title>
+     <link rel="stylesheet" type="text/css" href="styles.css" />
+     <script src="https://d3js.org/d3.v7.min.js"></script>
+   </head>
+   <body>
+     <header>
+       <h1 class="title">Fields of Women: Data Exploration</h1>
+     </header>
+     <main class="wrapper">
+       <div class="left-column">
+        <svg id="svg"></svg>
+       </div>
+       <div class="right-column">
+        <div class="right-column-content">
+          <div class="filler-verse"></div>
+          <ul class="verse" id="verse1">
+            <li class="line" id="line1">As a little girl, </li>
+            <li class="line" id="line2">the chasm before me seemed like nothing more</li>
+            <li class="line" id="line3">than a crack in the sidewalk</li>
+          </ul>
+  
+          <ul class="verse" id="verse2">
+            <li class="line" id="line1">A simple game, I thought</li>
+            <li class="line" id="line2">- an effortless step, not knowing</li>
+            <li class="line" id="line3">it had broken the backs of countless mothers before me</li>
+          </ul>
+  
+          <ul class="verse" id="verse3">
+            <li class="line" id="line1">As I grew, so did the crack,</li>
+            <li class="line" id="line2">now a sizable pit,</li>
+            <li class="line" id="line3">plenty big enough for me to fall into</li>
+          </ul>
+          
+          <ul class="verse" id="verse4">
+            <li class="line" id="line1">But it would be fine, they cooed,</li>
+            <li class="line" id="line2">it's not as far as it seems,</li>
+            <li class="line" id="line3">you can certainly make it</li>
+          </ul>
+  
+          <ul class="verse" id="verse5">
+            <li class="line" id="line1">So I turned away,</li>
+            <li class="line" id="line2">ignoring the gnawing of the gorge as it grew</li>
+            <li class="line" id="line3">just out of sight</li>
+          </ul>
+  
+          <ul class="verse" id="verse6">
+              <li class="line" id="line1">And when I finally took a peek,</li>
+              <li class="line" id="line2">the chasm yawned back,</li>
+              <li class="line" id="line3">just <em>daring</em> me to jump</li>
+          </ul>
+          <div class="filler-verse"></div>
+        </div>
+       </div>
+     </main>
+     <footer>
+      <div class="slidecontainer">
+        <input type="range" min="1999" max="2019" value="2009" class="slider" id="myRange">
+      </div>
+     </footer>
+     <script src="main.js"></script>
+   </body>
+ </html>
