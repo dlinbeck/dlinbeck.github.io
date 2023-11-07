@@ -100,14 +100,6 @@ async function loadData(){
         weaponTrueData = data;
     });
 
-    await d3.csv("MS_Race.csv").then(data => {
-        raceFreqData = data;
-    });
-
-    await d3.csv("MS_outcomeByRacePercent.csv").then(data => {
-        outcomeRaceData = data;
-    });
-
     await d3.csv("MS_AR15.csv").then(data => {
         freqARData = data;
     });
