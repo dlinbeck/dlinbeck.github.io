@@ -1,57 +1,408 @@
-
-let svg = d3.select("#svg");
-let keyframeIndex = 0;
-
-const height = 475;
-const width = 750;
-
-let fieldData;
-
-let bubblebox;
-let boxWidth;
-let boxHeight;
-
-var slider = document.getElementById("myRange");
-var output = document.getElementById("demo");
-//output.innerHTML = slider.value; // Display the default slider value
-
-// Update the current slider value (each time you drag the slider handle)
-slider.oninput = function() {
-  output.innerHTML = this.value;
-}
-
+/* THIS CODE IS MY OWN WORK, IT WAS WRITTEN WITHOUT CONSULTING CODE
+ WRITTEN BY OTHER STUDENTS OR LARGE LANGUAGE MODELS LIKE CHATGPT. 
+ - Danielle Linbeck */
 let keyframes = [
     {
         activeVerse: 1,
-        activeLines: [1, 2, 3]
+        activeLines: [1, 2, 3, 4],
+        svgUpdate: drawFreqSev
     },
     {
         activeVerse: 2,
-        activeLines: [1, 2, 3]
+        activeLines: [1, 2, 3],
     },
     {
         activeVerse: 3,
-        activeLines: [1, 2, 3]
+        activeLines: [1, 2],
+        svgUpdate: drawMentalSkew
+        
+    },
+    {
+        activeVerse: 3,
+        activeLines: [3],
+        svgUpdate: drawMentalTrue
+        
     },
     {
         activeVerse: 4,
-        activeLines: [1, 2, 3]
+        activeLines: [1, 2],
+        svgUpdate: drawWeaponSkew
+    },
+    {
+        activeVerse: 4,
+        activeLines: [3],
+        svgUpdate: drawWeaponTrue
     },
     {
         activeVerse: 5,
-        activeLines: [1, 2, 3]
+        activeLines: [1],
+        svgUpdate: drawFreqShort
+    },
+    {
+        activeVerse: 5,
+        activeLines: [2, 3],
+        svgUpdate: drawAR
     },
     {
         activeVerse: 6,
-        activeLines: [1, 2, 3]
+        activeLines: [1, 2, 3, 4],
+        svgUpdate: drawFreqSev
     }
 ]
+
+// define global variables
+let svg = d3.select("#svg");
+let keyframeIndex = 0;
+
+const height = 400;
+const width = 750;
+
+let freqSevData;
+let mentalSkewData;
+let mentalTrueData;
+let weaponSkewData;
+let weaponTrueData;
+let freqARData;
+let freqShortData;
+
+let chart;
+let chartWidth;
+let chartHeight;
+
+let xScale;
+let yScale;
+
+let tooltip;
+
+// add event listeners to the buttons
+document.getElementById("forward-button").addEventListener("click", forwardClicked);
+document.getElementById("backward-button").addEventListener("click", backwardClicked);
+
+// write an asynchronous loadData function
+async function loadData(){
+    await d3.csv("MS_FreqSevbyYear.csv").then(data => {
+        freqSevData = data;
+    });
+
+    await d3.csv("MS_mentalHealthSkew.csv").then(data => {
+        mentalSkewData = data;
+    });
+
+    await d3.csv("MS_mentalHealthTrue.csv").then(data => {
+        mentalTrueData = data;
+    });
+
+    await d3.csv("MS_weaponObtainedSkew.csv").then(data => {
+        weaponSkewData = data;
+    });
+
+    await d3.csv("MS_weaponObtainedTrue.csv").then(data => {
+        weaponTrueData = data;
+    });
+
+    await d3.csv("MS_Race.csv").then(data => {
+        raceFreqData = data;
+    });
+
+    await d3.csv("MS_outcomeByRacePercent.csv").then(data => {
+        outcomeRaceData = data;
+    });
+
+    await d3.csv("MS_AR15.csv").then(data => {
+        freqARData = data;
+    });
+
+    await d3.csv("MS_FreqSevbyYearShort.csv").then(data => {
+        freqShortData = data;
+    });
+}
+
+function drawFreqSev() {
+    makeFreqSevChart(freqSevData,"Number of US Mass Shootings by Year");
+}
+
+function drawFreqShort() {
+    makeFreqSevChart(freqShortData,"Number of US Mass Shootings by Year");
+}
+
+function drawMentalSkew() {
+    makeMentalChart(mentalSkewData,"Where there Prior Signs of Mental Health Issues?");
+}
+
+function drawMentalTrue() {
+    makeMentalChart(mentalTrueData,"Where there Prior Signs of Mental Health Issues?");
+}
+
+function drawWeaponSkew() {
+    makeWeaponChart(weaponSkewData,"Were the Weapons Obtained Legally?");
+}
+
+function drawWeaponTrue() {
+    makeWeaponChart(weaponTrueData,"Were the Weapons Obtained Legally?");
+}
+
+function drawAR() {
+    makeARChart(freqARData,"Percent of Mass Shootings Involving an AR-15 by Year");
+}
+
+
+function makeFreqSevChart(data, title = "") {
+    tool = d3.select(".tooltip");
+    //Update our scales so that they match the new data
+    xScale.domain(data.map(d => d.year));
+    yScale.domain([0, 12]).nice();
+    
+    var colorScale = d3.scaleSequential().domain([0,28])
+        .interpolator(d3.interpolateViridis);
+
+    // select all the existing bars
+    const bars = chart.selectAll(".bar")
+        .data(data, d => d.year);
+
+    // remove any bars no longer in the dataset
+    bars.exit()
+        .transition()
+        .duration(500)
+        .attr("y", chartHeight)
+        .attr("height", 0)
+        .remove();
+
+    // move any bars that already existed to their correct spot
+    bars.transition()
+        .duration(700)
+        .attr("x", d => xScale(d.year))
+        .attr("y", d => yScale(d.count))
+        .attr("height", d => chartHeight - yScale(d.count));
+
+   // Add any new bars
+    bars.enter().append("rect")
+        .attr("class", "bar") //if new bar
+        .attr("x", d => xScale(d.year))
+        .attr("y", chartHeight) //off screen, come in from bottom
+        .attr("height", 0)
+        .attr("width", xScale.bandwidth()) //if new bar
+        .attr("fill", d => colorScale(d.averageTotalVictims))
+        .transition()
+        .duration(1000) //1 second
+        .attr("y", d => yScale(d.count))
+        .attr("height", d => chartHeight - yScale(d.count));
+
+    // update the x and y axis
+    chart.select(".x-axis")
+        .transition()
+        .duration(700)
+        .call(d3.axisBottom(xScale));
+
+    chart.select(".y-axis")
+        .transition()
+        .duration(700)
+        .call(d3.axisLeft(yScale));
+
+    /// update the title
+    if (title.length > 0) {
+        svg.select("#chart-title")
+            .transition()
+            .duration(700)
+            .text(title);
+    }
+}
+
+function makeMentalChart(data, title = "") {
+    //Update our scales so that they match the new data
+    xScale.domain(data.map(d => d.priorSigns));
+    yScale.domain([0, d3.max(data, d => d.count)]).nice();
+
+    var colorScale = d3.scaleOrdinal().domain(data.map(d => d.priorSigns))
+        .range(["#443983", "#21918c", "#90d743"])
+
+    // select all the existing bars
+    const bars = chart.selectAll(".bar")
+        .data(data, d => d.priorSigns);
+
+    // remove any bars no longer in the dataset
+    bars.exit()
+        .transition()
+        .duration(500)
+        .attr("y", chartHeight)
+        .attr("height", 0)
+        .remove();
+
+    // move any bars that already existed to their correct spot
+    bars.transition()
+        .duration(700)
+        .attr("x", d => xScale(d.priorSigns))
+        .attr("y", d => yScale(d.count))
+        .attr("height", d => chartHeight - yScale(d.count));
+
+   // Add any new bars
+    bars.enter().append("rect")
+        .attr("class", "bar") //if new bar
+        .attr("x", d => xScale(d.priorSigns))
+        .attr("y", chartHeight) //off screen, come in from bottom
+        .attr("height", 0)
+        .attr("width", xScale.bandwidth()) //if new bar
+        .attr("fill", d => colorScale(d.priorSigns))
+        .transition()
+        .duration(1000) //1 second
+        .attr("y", d => yScale(d.count))
+        .attr("height", d => chartHeight - yScale(d.count));
+
+    // update the x and y axis
+    chart.select(".x-axis")
+        .transition()
+        .duration(700)
+        .call(d3.axisBottom(xScale));
+
+    chart.select(".y-axis")
+        .transition()
+        .duration(700)
+        .call(d3.axisLeft(yScale));
+
+    /// update the title
+    if (title.length > 0) {
+        svg.select("#chart-title")
+            .transition()
+            .duration(700)
+            .text(title);
+    }
+}
+
+function makeWeaponChart(data, title = "") {
+    //Update our scales so that they match the new data
+    xScale.domain(data.map(d => d.legal));
+    yScale.domain([0, d3.max(data, d => d.count)]).nice();
+
+    var colorScale = d3.scaleOrdinal().domain(data.map(d => d.legal))
+        .range(["#443983", "#21918c", "#90d743"])
+
+    // select all the existing bars
+    const bars = chart.selectAll(".bar")
+        .data(data, d => d.legal);
+
+    // remove any bars no longer in the dataset
+    bars.exit()
+        .transition()
+        .duration(500)
+        .attr("y", chartHeight)
+        .attr("height", 0)
+        .remove();
+
+    // move any bars that already existed to their correct spot
+    bars.transition()
+        .duration(700)
+        .attr("x", d => xScale(d.legal))
+        .attr("y", d => yScale(d.count))
+        .attr("height", d => chartHeight - yScale(d.count));
+
+   // Add any new bars
+    bars.enter().append("rect")
+        .attr("class", "bar") //if new bar
+        .attr("x", d => xScale(d.legal))
+        .attr("y", chartHeight) //off screen, come in from bottom
+        .attr("height", 0)
+        .attr("width", xScale.bandwidth()) //if new bar
+        .attr("fill", d => colorScale(d.legal))
+        .transition()
+        .duration(1000) //1 second
+        .attr("y", d => yScale(d.count))
+        .attr("height", d => chartHeight - yScale(d.count));
+
+    // update the x and y axis
+    chart.select(".x-axis")
+        .transition()
+        .duration(700)
+        .call(d3.axisBottom(xScale));
+
+    chart.select(".y-axis")
+        .transition()
+        .duration(700)
+        .call(d3.axisLeft(yScale));
+
+    /// update the title
+    if (title.length > 0) {
+        svg.select("#chart-title")
+            .transition()
+            .duration(700)
+            .text(title)
+    }
+}
+
+function makeARChart(data, title = "") {
+    //Update our scales so that they match the new data
+    xScale.domain(data.map(d => d.year));
+    yScale.domain([0, 60]).nice();
+
+    var colorScale = d3.scaleSequential().domain([10,75])
+        .interpolator(d3.interpolateViridis);
+
+    // select all the existing bars
+    const bars = chart.selectAll(".bar")
+        .data(data, d => d.year);
+
+    // remove any bars no longer in the dataset
+    bars.exit()
+        .transition()
+        .duration(500)
+        .attr("y", chartHeight)
+        .attr("height", 0)
+        .remove();
+
+    // move any bars that already existed to their correct spot
+    bars.transition()
+        .duration(700)
+        .attr("x", d => xScale(d.year))
+        .attr("y", d => yScale(d.percent))
+        .attr("height", d => chartHeight - yScale(d.percent));
+
+   // Add any new bars
+    bars.enter().append("rect")
+        .attr("class", "bar") //if new bar
+        .attr("x", d => xScale(d.year))
+        .attr("y", chartHeight) //off screen, come in from bottom
+        .attr("height", 0)
+        .attr("width", xScale.bandwidth()) //if new bar
+        .attr("fill", d => colorScale(d.percent))
+        .transition()
+        .duration(1000) //1 second
+        .attr("y", d => yScale(d.percent))
+        .attr("height", d => chartHeight - yScale(d.percent));
+
+    // update the x and y axis
+    chart.select(".x-axis")
+        .transition()
+        .duration(700)
+        .call(d3.axisBottom(xScale));
+
+    chart.select(".y-axis")
+        .transition()
+        .duration(700)
+        .call(d3.axisLeft(yScale));
+
+    /// update the title
+    if (title.length > 0) {
+        svg.select("#chart-title")
+            .transition()
+            .duration(700)
+            .text(title);
+    }
+}
+
+function forwardClicked() {
+    if (keyframeIndex < keyframes.length - 1) {
+        keyframeIndex++;
+        drawKeyframe(keyframeIndex);
+    }}
+
+function backwardClicked() {
+    if (keyframeIndex > 0) {
+        keyframeIndex--;
+        drawKeyframe(keyframeIndex);
+      }}
 
 function drawKeyframe(kfi) {
     // get keyframe at index position
     let kf = keyframes[kfi];
 
-    // reset any active lines
     resetActiveLines();
 
     // update the active verse
@@ -110,105 +461,93 @@ function scrollLeftColumnToActiveVerse(id){
     })
 }
 
-async function loadData(){ //title Female share of graduates in tertiary programs by field (%)
-    await d3.csv("simpleGradsGender.csv").then(data => {
-        fieldData = data;
-    });
-}
 
-function drawFields() {
-    //updateBubbleBox(fieldData,"Percent of Graduates by Field");
-    initializeSVG(fieldData);
-}
-
-//d3.slider().axis(true).min(1999).max(2019).step(1)
-
-function initializeSVG(data){
+// write a function to initialise the svg properly
+function initialiseSVG(){
     svg.attr("width", width);
     svg.attr("height", height);
 
-    boxWidth = width;
-    boxHeight = height + 13;
-
     svg.selectAll("*").remove();
 
-    let sizeScale = d3.scaleLinear()
-        .domain(data.map(d => d.fieldSize)) //[118, 147]
-        .range([1.0, 1.04]); //making the scale any bigger causes issues with the radius in force simulation
+    const margin = { top: 30, right: 30, bottom: 50, left: 50 };
+    chartWidth = width - margin.left - margin.right;
+    chartHeight = height - margin.top - margin.bottom;
 
-    let sequentialScale = d3.scaleSequential()
-        .domain([0, 100])
-        .interpolator(d3.interpolateViridis);
+    chart = svg.append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    // Initialize the circle: all located at the center of the svg area
-    var node = svg.append("g")
-        .selectAll("circle")
-        .data(data, d => d.field)
-        .enter()
-        .append("circle")
-            .attr("r", d => 45 * sizeScale(d.fieldSize))
-            .attr("cx", boxWidth / 2)
-            .attr("cy", boxHeight / 2)
-            .style("fill", d => sequentialScale(d.female))
-            .style("fill-opacity", 0.5)
-            .attr("stroke", d => sequentialScale(d.female))
-            .style("stroke-width", 2)
-            .call(d3.drag() // call specific function when circle is dragged
-                .on("start", dragstarted)
-                .on("drag", dragged)
-                .on("end", dragended));
+    xScale = d3.scaleBand()
+        .domain([])
+        .range([0, chartWidth])
+        .padding(0.1);
 
-    // Features of the forces applied to the nodes:
-    var simulation = d3.forceSimulation()
-        .force("center", d3.forceCenter().x(boxWidth / 2).y(boxHeight / 2)) // Attraction to the center of the svg area
-        .force("charge", d3.forceManyBody().strength(1)) // Nodes are attracted one each other of value is > 0
-        .force("collide", d3.forceCollide().strength(.1).radius(50).iterations(1)) // Force that avoids circle overlapping
+    yScale = d3.scaleLinear()
+        .domain([])
+        .nice()
+        .range([chartHeight, 0]);
 
-    // Makes the circles draggable - will have working for interactable deadline
-    simulation
-        .nodes(data)
-        .on("tick", function(d){
-            node
-                .attr("cx", function(d){ return d.x; })
-                .attr("cy", function(d){ return d.y; })
-        });
+    // Add x-axis
+    chart.append("g")
+        .attr("class", "x-axis")
+        .attr("transform", `translate(0,${chartHeight})`)
+        .call(d3.axisBottom(xScale))
+        .selectAll("text");
 
+    // Add y-axis
+    chart.append("g")
+        .attr("class", "y-axis")
+        .call(d3.axisLeft(yScale))
+        .selectAll("text");
+
+    // Add title
     svg.append("text")
         .attr("id", "chart-title")
         .attr("x", width / 2)
-        .attr("y", 35)
+        .attr("y", 24)
         .attr("text-anchor", "middle")
-        .style("font-size", "20px")
-        .style("fill", "#393842;")
-        .text("Graduates in Tertiary Programs by Field");
+        .style("font-size", "18px")
+        .style("font-family", "helvetica, arial, verdana, sans-serif")
+        .style("fill", "#362E31")
+        .text("");
+    
+    var tooltip = d3.select(".right-column")
+        .append("div")
+        .style("opacity", 0)
+        .attr("class", "tooltip")
+        .style("background-color", "white")
+        .style("border", "solid")
+        .style("border-width", "1px")
+        .style("border-radius", "5px")
+        .style("font-family", "helvetica, arial, verdana, sans-serif")
+        .style("padding", "10px")
+        .style("color", "black");
+    
 }
 
-function dragstarted(d) {
-    if (!d3.event.active) simulation.alphaTarget(.03).restart();
-    d.fx = d.x;
-    d.fy = d.y;
+function makeHoverTooltip(){
+    const bars = chart.selectAll(".bar")
+    tool = d3.select(".tooltip")
+    
+    bars.on("mouseover", () => {
+            tool.style("opacity", 1)
+                .html("Average Victims: Troubleshooting");
+        })
+        .on("mouseout", () => {
+            tool.style("opacity", 0);
+        });
 }
 
-function dragged(d) {
-    d.fx = d3.event.x;
-    d.fy = d3.event.y;
-}
-
-function dragended(d) {
-    if (!d3.event.active) simulation.alphaTarget(.03);
-    d.fx = null;
-    d.fy = null;
-}
-
-async function initialize() { //made asynch
+async function initialise() { //made asynch
     
     await loadData(); //load the data
 
-    drawFields(); //initalise the SVG
+    initialiseSVG(); //initalise the SVG
 
-    drawKeyframe(0); //temporary
+    drawKeyframe(keyframeIndex); //draw the first keyframe
+    
+    //makeHoverTooltip(); troubleshooting
 
 }
 
 
-initialize();
+initialise();

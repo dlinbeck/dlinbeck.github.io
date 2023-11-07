@@ -1,129 +1,129 @@
 /* THIS CODE IS MY OWN WORK, IT WAS WRITTEN WITHOUT CONSULTING CODE
  WRITTEN BY OTHER STUDENTS OR LARGE LANGUAGE MODELS LIKE CHATGPT. 
  - Danielle Linbeck */
-body {
-    background-color: #9BA89F;
-    color: black;;
-    font-family: 'Roboto Slab', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-}
-
+/* Resetting some defaults so we can define things manually */
+body,
 h1,
 p {
-  margin-top: 15px;
+  margin: 0;
   padding: 0;
 }
 
+/* Styling our header */
 header {
+  background-color: #21232E;
   text-align: center;
-  height: 70px;
+  color: #ddd;
+  height: 100px;
+  font-family: helvetica, arial, verdana, sans-serif;
 }
 
 .title {
-    padding: 20px;
+  padding: 30px;
 }
-  
+
 .wrapper {
-    display: flex; 
-    flex-grow: 1;
-    min-height: calc(100vh - 150px);
+  display: flex; /* Allows us to position things inside this div with more freedom, see https://css-tricks.com/snippets/css/a-guide-to-flexbox/ for more details*/
+  flex-grow: 1; /* The div will now grow to fill the available space */
+
+  /* make sure the minimum height of the wrapper is such that it fills the remaining space */
+  /* NB we are going to do this in a slightly hacky way */
+  /* vh is the viewheight, you should use this VERY sparingly, this situation is ok because we're limiting what the user can do */
+  /* we'll minus 150px as this is the height we have manually defined the header and footer to be combined (100px + 50px)*/
+  /* If we changed the height of the header and footer we'd have to change this here too! */
+  min-height: calc(100vh - 150px);
 }
 
 .left-column {
-    flex: 2; 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  flex: 1; /* in tandem with other flex values in the parent div tells us how much space will be taken up by this column, in this situation 1/3*/
+  background-color: #4D5682; /* colors generated with Colormind to match with both red and purple*/
+  color: black;
+  display: flex;
+  /* Position things vertically in the centre */
+  align-items: center;
+  /* Position things horizontally in the centre */
+  justify-content: center;
+  padding: 20px;
+}
+
+.left-column-content {
+  /* make sure the maximum height of this container never exceeds the available space */
+  /* This is again slightly janky and will have to be updated if we change the size of the header and footer */
+  max-height: calc(100vh - 150px);
+  /* force the div to create a scrollbar instead of increasing its vertical height */
+  overflow: auto;
+  font-family: helvetica, arial, verdana, sans-serif;
+}
+
+/* hide the scrollbar on the left-column-content*/
+.left-column-content::-webkit-scrollbar{
+  width: 0;
+  height: 0;
 }
 
 .right-column {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-}
-  
-.right-column-content {
-    max-height: calc(100vh - 150px);
-    overflow: auto;
-    font-family: sans-serif;
-}
-
-.right-column-content::-webkit-scrollbar{
-    width: 0;
-    height: 0;
+  flex: 2; /* in tandem with the flex:1 on left-column, means this will take up 2/3 of the available space*/
+  background-color: #4D5682; /* updated with Colormind */
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 footer {
-    position: fixed;
-    bottom: 0; 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 55px;
-    background-color: #393842;
+  position: fixed; /*force the footer to not move regardless of what else is going on on the page*/
+  bottom: 0; /* Make sure it stays at the bottom of the page */
+  background-color: #21232E; /* updated with Colormind */
+  display: flex; /*need this to be a flex to work with justify-content/align-items*/
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 50px;
 }
 
-svg {
-    background-color: white;
+.arrow-button {
+  font-size: 10px;
+  cursor: pointer;
+  padding: 2px 10px;
+  margin: 0 10px;
+  height: 23px;
+  box-shadow: 0 4px #999;
+}
+
+.arrow-button:active {
+  box-shadow: 0 2px #666;
+  transform: translateY(4px);
 }
 
 .verse {
-    font-size: 2em;
-    list-style-type: none;
-    padding: 0px;
-    font-weight: 200;
-    color: lightslategray;
+  font-size: 1.67em;
+  list-style-type: none;
+  padding: 10px;
+  font-weight: 100;
+  color: #2a304d;
 }
 
+svg {
+  background-color: #FFFEFC; /* updated with Colormind */
+  color: #362E31;
+}
+
+/* add css classes for active-verse and active-line */
 .active-verse{
-    font-weight: 600;
-    color: darkslategrey; /* updated with Colormind */
+  font-weight: 550;
+  color: #8888b0; /* updated with Colormind */
 }
-  
+
 .active-line{
-    color:black;
+  color:#ddd;
 }
 
+/* add css to create filler verse  */
 .filler-verse{
-    height:145px;
+  height:175px;
 }
 
-.slidecontainer {
-    width: 50%; /* Width of the outside container */
-}
-
-.slider {
-    -webkit-appearance: none;
-    width: 100%;
-    height: 10px;
-    border-radius: 5px;  
-    background: #d3d3d3;
-    outline: none;
-    opacity: 0.85;
-    -webkit-transition: .2s;
-    transition: opacity .2s;
-}
-
-.slider:hover {
-    opacity: 1; /* Fully shown on mouse-over */
-}
-
-.slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 25px;
-    height: 25px;
-    border-radius: 50%; 
-    background: #FFC874;
-    cursor: pointer;
-}
-
-.slider::-moz-range-thumb {
-    width: 25px;
-    height: 25px;
-    border-radius: 50%;
-    background: #FFC874;
-    cursor: pointer;
+/* illustrate how to use css classes to interact with d3 elements */
+.bar:hover{
+  fill-opacity: 85%;
 }
