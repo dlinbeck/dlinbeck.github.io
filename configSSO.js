@@ -5,7 +5,7 @@ const msalConfig = {
     auth: {
         clientId: "42415a6b-2204-4b21-a31e-ee9db4576856",
         authority: "https://login.microsoftonline.com/a53b7f37-b2ed-42ba-968b-e6a846f30c21",
-        redirectUri: 'https://dlinbeck.github.io/?',
+        redirectUri: 'https://dlinbeck.github.io/',
         navigateToLoginRequestUrl: false,
     },
     cache: {
