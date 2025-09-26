@@ -12,6 +12,8 @@ msalInstance.initialize().then(() => {
         });
 })
 */
+const msalInstance = new msal.PublicClientApplication(msalConfig);
+
 msalInstance.handleRedirectPromise()
     .then(handleResponse)
     .catch((error) => {
