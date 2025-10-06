@@ -59,7 +59,7 @@ const msalInstance = new msal.PublicClientApplication(msalConfig);
  */
 
 
-async function login() {
+function login() {
     silentRequest.loginHint = "dlinbeck@linbeck.com"
     //msalInstance.loginPopup(silentRequest);
     try {
