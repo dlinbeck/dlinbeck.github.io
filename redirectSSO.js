@@ -60,9 +60,11 @@ const msalInstance = new msal.PublicClientApplication(msalConfig);
 window.addEventListener("load", _ => {
     let loginBtn;
     let silentBtn;
+    let redirBtn;
 
     loginBtn = document.getElementById("login-btn");
     silentBtn = document.getElementById("silent-btn");
+    redirBtn = document.getElementById("redirect-btn");
 
     loginBtn.onclick=async() => {
         silentRequest.loginHint = "dlinbeck@linbeck.com"
@@ -96,9 +98,19 @@ window.addEventListener("load", _ => {
             }
         }
     };
-    
-});
-/*
+
+    loginBtn.addEventListener('click', _ => loginRedir());
+
+}); // end onload
+
+// redirect login
+function loginRedir() {
+    silentRequest.loginHint = "dlinbeck@linbeck.com";
+    msalInstance.loginRedirect(silentRequest);
+}
+
+// redirect return handling
+
 msalInstance.handleRedirectPromise()
     .then(handleResponse)
     .catch((error) => {
@@ -125,4 +137,3 @@ function handleResponse(response) {
         console.log("hash: " + window.location.hash);
     }
 }
-*/
