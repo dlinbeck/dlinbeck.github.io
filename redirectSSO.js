@@ -59,18 +59,44 @@ const msalInstance = new msal.PublicClientApplication(msalConfig);
  */
 window.addEventListener("load", _ => {
     let loginBtn;
+    let silentBtn;
+
     loginBtn = document.getElementById("login-btn");
+    silentBtn = document.getElementById("silent-btn");
 
     loginBtn.onclick=async() => {
         silentRequest.loginHint = "dlinbeck@linbeck.com"
         try {
             const loginResponse = await msalInstance.loginPopup(silentRequest);
+            console.log("SUCCESS - POPUP");
             console.log(loginResponse);
         } catch (err) {
             console.log("FAIL");
         }
 
     };
+
+    silentBtn.onclick=async() => {
+        silentRequest.loginHint = "dlinbeck@linbeck.com"
+        try {
+            const loginResponse = await msalInstance.ssoSilent(silentRequest);
+            console.log("SUCCESS - SILENT");
+            console.log(loginResponse);
+        } catch (err) {
+            if (err instanceof InteractionRequiredAuthError) {
+                const loginResponse = await msalInstance
+                    .loginPopup(silentRequest)
+                    .catch((error) => {
+                        console.log("FAIL: " + error);
+                    });
+                console.log("SUCCESS - POPUP");
+                console.log(loginResponse);
+            } else {
+                console.log("FAIL SILENT: " + err);
+            }
+        }
+    };
+    
 });
 /*
 msalInstance.handleRedirectPromise()
