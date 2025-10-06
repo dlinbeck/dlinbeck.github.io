@@ -52,7 +52,7 @@ const silentRequest = {
 }
 
 const msalInstance = new msal.PublicClientApplication(msalConfig);
-await msalInstance.initialize();
+//await msalInstance.initialize();
 
 /*
  * ===== BLOCK =====
