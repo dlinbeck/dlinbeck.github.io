@@ -14,6 +14,11 @@ msalInstance.initialize().then(() => {
 */
 //const msalInstance = new msal.PublicClientApplication(msalConfig);
 
+function login() {
+    silentRequest.loginHint = "dlinbeck@linbeck.com"
+    msalInstance.loginRedirect(silentRequest);
+}
+
 msalInstance.handleRedirectPromise()
     .then(handleResponse)
     .catch((error) => {

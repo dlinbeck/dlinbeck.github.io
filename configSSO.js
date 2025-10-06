@@ -51,5 +51,4 @@ const silentRequest = {
     state: "test",
 }
 
-//const msalInstance = new msal.PublicClientApplication(msalConfig);
-const msalInstance = await PublicClientApplication.createPublicClientApplication(msalConfig);
+const msalInstance = new msal.PublicClientApplication(msalConfig);
