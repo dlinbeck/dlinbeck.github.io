@@ -57,7 +57,10 @@ const msalInstance = new msal.PublicClientApplication(msalConfig);
 /*
  * ===== BLOCK =====
  */
-document.getElementById("loginBtn").onclick=async() => {
+let loginBtn;
+loginBtn = document.getElementById("login-btn");
+
+loginBtn.onclick=async() => {
     silentRequest.loginHint = "dlinbeck@linbeck.com"
     try {
         const loginResponse = await msalInstance.loginPopup(silentRequest);
