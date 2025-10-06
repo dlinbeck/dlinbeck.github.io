@@ -1,0 +1,22 @@
+<!-- 
+	Page:  redirectSSO.shtml
+	Created:  07/28/25 [DRL]
+	Description:  SSO redirect page (Microsoft returns result of SSO here)
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<script type="text/javascript" src="https://alcdn.msauth.net/browser/2.35.0/js/msal-browser.min.js"></script>
+        
+		<script src="redirectSSO.js"></script>
+		<title>SSO Redirect</title>
+	</head>
+	<body>
+		<button id="login-btn" style="padding-bottom:10px;" type="button">Popup Login</button>
+		<button id="silent-btn" style="padding-bottom:10px;" type="button">Silent Login</button>
+		<button id="redirect-btn" type="button">Redirect Login</button>
+	</body>
+</html>
