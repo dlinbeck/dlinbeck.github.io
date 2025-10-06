@@ -57,20 +57,21 @@ const msalInstance = new msal.PublicClientApplication(msalConfig);
 /*
  * ===== BLOCK =====
  */
-let loginBtn;
-loginBtn = document.getElementById("login-btn");
+window.addEventListener("load", _ => {
+    let loginBtn;
+    loginBtn = document.getElementById("login-btn");
 
-loginBtn.onclick=async() => {
-    silentRequest.loginHint = "dlinbeck@linbeck.com"
-    try {
-        const loginResponse = await msalInstance.loginPopup(silentRequest);
-        console.log(loginResponse);
-    } catch (err) {
-        console.log("FAIL");
-    }
+    loginBtn.onclick=async() => {
+        silentRequest.loginHint = "dlinbeck@linbeck.com"
+        try {
+            const loginResponse = await msalInstance.loginPopup(silentRequest);
+            console.log(loginResponse);
+        } catch (err) {
+            console.log("FAIL");
+        }
 
-};
-
+    };
+});
 /*
 msalInstance.handleRedirectPromise()
     .then(handleResponse)
