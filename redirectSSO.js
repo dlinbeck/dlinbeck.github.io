@@ -99,7 +99,7 @@ window.addEventListener("load", _ => {
         }
     };
 
-    loginBtn.addEventListener('click', _ => loginRedir());
+    redirBtn.addEventListener('click', _ => loginRedir());
 
 }); // end onload
 
